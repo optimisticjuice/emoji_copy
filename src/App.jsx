@@ -10,7 +10,8 @@ function App() {
   const [emojiStory, setEmojiStory] = useState([]);
   const [loading,setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const [emojiNames, setEmojiNames] = useState([]);
+  // need this to display the name of the emoji as an array 
   const handleInputChange = (event) => {
   // handleInputChange function changes the value of the input so what is typed is stored in the input variable
     setInput(event.target.value);
@@ -118,7 +119,14 @@ function App() {
       
     <div onDoubleClick={toggleTinyText}>
       <div className='rowlike'>
-        {emojiStory}
+      {emojiStory.map((emoji, index) => (
+          <span key={index}>
+            <div className='tinytext'>
+              {emojiNames[index]} {`  `}
+            </div>
+            {emoji} {` `}
+          </span>
+        ))}  
       </div>
     </div>
     <div>
