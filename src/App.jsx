@@ -1,7 +1,7 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import './Style.css';
-// const API_KEY = import.meta.env.VITE_API_KEY;
-// const API_URL = 'https://api.api-ninjas.com/v1/emoji?name=';
+const API_KEY = import.meta.env.VITE_API_KEY;
+ const API_URL = 'https://api.api-ninjas.com/v1/emoji?name=';
 // TODO: uncomment the APIs when the API is ready
 
 // useState hook needs to be inside the App function
@@ -9,7 +9,7 @@ function App() {
   const [input, setInput] = useState('');
   const [isTinyTextDisplayed, setIsTinyTextDisplayed] = useState(false);
   const [emojiStory, setEmojiStory] = useState([]);
-  const [isloading,setIsLoading] = useState(false);
+  const [loading,setIsLoading] = useState(false);
 
 
   const handleInputChange = (event) => {
@@ -37,6 +37,36 @@ function App() {
   
 
     // Process the input whenever it changes
+  
+
+  //! used to memoize the fetchEmoji function with useCallback
+  const fetchEmoji = useCallback(async (word) => {
+    if (!word.trim()) return '❓';
+    
+    try {
+      const response = await fetch(`${API_URL}${encodeURIComponent(word.trim())}`, {
+        headers: { 
+          'X-Api-Key': API_KEY,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Emoji not found');
+      }
+
+      const data = await response.json();
+      return {
+        character: data[0]?.character || '❓',
+        name: data[0]?.name || 'unknown'
+      };
+    } catch (err) {
+      console.error('Error fetching emoji:', err);
+      return '❓'; // Return question mark if emoji not found
+    }
+  }, []);
+
+
   useEffect(() => {
     const processInput = async () => {
       // Checks if the input ends with a space and is not empty
@@ -67,8 +97,7 @@ function App() {
     };
 
     processInput();
-  }, [input, fetchEmoji, emojiStory.length]);
-
+  }, [input, fetchEmoji]);
 
   return (
     <>
@@ -88,8 +117,7 @@ function App() {
       {/* {} */}
     <div onDoubleClick={toggleTinyText}>
       <div className='rowlike'>
-        {/*         {emojiStory.map((emoji, index) => (
-        */}
+        {emojiStory}
       </div>
     </div>
     <div>
