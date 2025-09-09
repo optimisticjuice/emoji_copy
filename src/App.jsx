@@ -97,7 +97,7 @@ function App() {
     };
 
     processInput();
-  }, [input, fetchEmoji]);
+  }, [input, fetchEmoji, emojiStory.length]);
 
   return (
     <>
@@ -116,7 +116,7 @@ function App() {
 {error && <p style={{ color: 'red' }}>{error}</p>}
 {/* continguency to see errors and loading */}
       </div>
-      
+      {/* Display the emoji story, with names displayed as double clickable tooltips 120 - 131 */}
     <div onDoubleClick={toggleTinyText}>
       <div className='rowlike'>
       {emojiStory.map((emoji, index) => (
