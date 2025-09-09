@@ -8,6 +8,10 @@ import './Style.css';
 function App() {
   const [input, setInput] = useState('');
   const [isTinyTextDisplayed, setIsTinyTextDisplayed] = useState(false);
+  const [emojiStory, setEmojiStory] = useState([]);
+  const [isloading,setIsLoading] = useState(false);
+
+
   const handleInputChange = (event) => {
   // handleInputChange function changes the value of the input so what is typed is stored in the input variable
     setInput(event.target.value);
@@ -30,6 +34,41 @@ function App() {
     }
     // changes the code inside the useEffect function when the isTinyTextDisplayed state changes
   }, [isTinyTextDisplayed]);
+  
+
+    // Process the input whenever it changes
+  useEffect(() => {
+    const processInput = async () => {
+      // Checks if the input ends with a space and is not empty
+      if (!input.endsWith(' ') && input !== '') return;
+              // Splits the input into words and filters out any empty strings
+      const words = input.trim().split(' ').filter(Boolean);
+      // Checks if the words array is empty
+      if (words.length === 0) return;
+      // Gets the last word from the input
+      const lastWord = words[words.length - 1];
+      
+      // Only process if we have a new word (after space)
+      if (lastWord && (emojiStory.length === 0 || words.length > emojiStory.length)) {
+        setIsLoading(true);
+        try {
+          const emojiData = await fetchEmoji(lastWord);
+          // Adds the emoji to the emojiStory array
+          setEmojiStory(prev => [...prev, emojiData.character]);
+          // Adds the emoji name to the emojiNames array
+          setEmojiNames(prev => [...prev, emojiData.name]);
+          setError('');
+        } catch (err) {
+          setError('Failed to fetch emoji');
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    processInput();
+  }, [input, fetchEmoji, emojiStory.length]);
+
 
   return (
     <>
@@ -40,7 +79,7 @@ function App() {
           value={input}
           onChange={handleInputChange}
           placeholder="Type words separated by spaces..."
-          // disabled={loading}
+          disabled={loading}
           // will do the isloading later is so when the isloading is true the input is disabled
 />  
    {/* input variable is the value of the input field [useState] */}
