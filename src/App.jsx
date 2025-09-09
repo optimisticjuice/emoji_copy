@@ -2,7 +2,6 @@ import {useState, useEffect, useCallback} from "react";
 import './Style.css';
 const API_KEY = import.meta.env.VITE_API_KEY;
  const API_URL = 'https://api.api-ninjas.com/v1/emoji?name=';
-// TODO: uncomment the APIs when the API is ready
 
 // useState hook needs to be inside the App function
 function App() {
@@ -10,7 +9,7 @@ function App() {
   const [isTinyTextDisplayed, setIsTinyTextDisplayed] = useState(false);
   const [emojiStory, setEmojiStory] = useState([]);
   const [loading,setIsLoading] = useState(false);
-
+  const [error, setError] = useState('');
 
   const handleInputChange = (event) => {
   // handleInputChange function changes the value of the input so what is typed is stored in the input variable
@@ -104,6 +103,7 @@ function App() {
     <div className="App" style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
       <h1>📖 Emoji Story</h1>
       <div>
+        {/* input variable is the value of the input field [useState] */}
         <input type="text" 
           value={input}
           onChange={handleInputChange}
@@ -111,10 +111,11 @@ function App() {
           disabled={loading}
           // will do the isloading later is so when the isloading is true the input is disabled
 />  
-   {/* input variable is the value of the input field [useState] */}
+{loading && <p>Loading emoji...</p>}
+{error && <p style={{ color: 'red' }}>{error}</p>}
+{/* continguency to see errors and loading */}
       </div>
-      {/* {} */}
-      {/* {} */}
+      
     <div onDoubleClick={toggleTinyText}>
       <div className='rowlike'>
         {emojiStory}
